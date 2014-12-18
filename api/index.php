@@ -1,5 +1,7 @@
 <?php
-  /* This file is used to recieve data from tab to server except sliptest and Homework */
+
+  /* This file is used to recieve data from tab to server (lower level data) */
+    
     error_reporting(0);
     ini_set('max_execution_time', 30000000);
      
@@ -18,12 +20,6 @@
     $syncall   = json_decode($json,true);
     $tab_id    = $syncall['tab_id'];
     
-
-/* This is for testing tab piloting for switching db dynamically */
-    
-    $school        = $syncall['school'];
-    connect_db($school);
-
     $school_id = get_school_id($tab_id);
 
  /* validating tablet */
@@ -56,22 +52,22 @@
                 foreach ($valid_tabs as $tab){                  
                   insert_row_in_sync_table($school_id,$table_name,$action,$query,0,0,1,$tab);
                 }
+                
                 array_push($succ_ids,$tab_sync_id);
               }   
            else
-             { 
-               $q_success = _run_query($query);
+              { 
+                $q_success = _run_query($query);
      
-               if($q_success)
+                if($q_success)
                   array_push($succ_ids,$tab_sync_id);
-              else
+                else
                   array_push($succ_ids,$tab_sync_id);
 
               }
          }
         }
 
-      
       //**********************************************
        
       if(!empty($succ_ids))

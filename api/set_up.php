@@ -1,6 +1,6 @@
 <?php
 
- /** this file is used to create first time syncing for tab **/
+ /** This file is used to create first time syncing for tab **/
 
     error_reporting(0);
     header('Content-Type: text/html; charset=utf-8');
@@ -10,15 +10,9 @@
     include_once "../../connection/connect.php";
     include_once "../helper/assist.php";
 
-/* This is for testing tab piloting for switching db dynamically */
-    
-    $school        = $_REQUEST['school'];
-    connect_db($school);
     
  /*recieve data from URI request */    
  
- // {school=0, tab_id=4cd463c2f1a6db66, table_name=students, req_call=1}
-
     $tab_id     = $_REQUEST['tab_id'];
     $table_name = $_REQUEST['table_name'];
     $req_call   = $_REQUEST['req_call'];
@@ -40,9 +34,6 @@
  /* delete all the entries which are already present in sync_mgt and sync_slip */
 
     delete_prev_entries($school_id,$tab_id);
-
- /* **************************************************************************   */
-
 
  /* preparing data to send */
     
@@ -85,20 +76,15 @@
            foreach ($cols as $col) {
                   $temp["$col"] = $row["$col"];  
            }
-
            $data_table[] = $temp;
          }   
 
           $response["Sync"] = $data_table;
 
-  
-        /****************************/
-       
           $response["success"] = 1;
      }
      
      echo json_encode($response,true); 
-
 ?>
 
 

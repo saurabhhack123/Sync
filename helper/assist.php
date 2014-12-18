@@ -122,13 +122,11 @@
 
   function is_hwdata_for_tab($school_id,$tab_id){
 
-    $sql  = "select * from sync_slip where SchoolId='$school_id' and TableName='homeworkmessage' and TabId='$tab_id' and IsAck=0";
+    $sql  = "select TabId from sync_slip where SchoolId='$school_id' and TableName='homeworkmessage' and TabId='$tab_id' and IsAck=0";
     $res  = mysql_query($sql) or die("Error in fetching from sync_mgt !".mysql_error());
     $rows = mysql_num_rows($res);
-
-    if($rows > 0) return true;
-    else          return false;
-
+   
+    return ($rows>0)?true:false; 
   }
 
   function is_strucdata_for_tab($school_id,$tab_id){
@@ -216,10 +214,6 @@ function get_hwdata_for_tab($school_id,$tab_id){
           $temp['Action']    = $row['Action'];
           $temp['SchoolId']  = $row['SchoolId'];
           $temp['HomeworkId'] = $row['SlipId'];
-          
-          
-          if($temp['TableName']!='sliptest')  $temp['HomeworkId'] = $row['SlipId'];
-          else       $temp['SlipId']  = $row['SlipId'];
           
           array_push($data["Sync"], $temp);
        } 
@@ -668,11 +662,12 @@ function send_att_sms_to_parents($school_id,$action,$query){
      return $school_ids;
   }
 
-  function get_cols_of_table($table){     
+  function get_cols_of_table($table){  
+
       $sql  = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='tabletproduction' AND `TABLE_NAME`='$table'";
       $res  =  mysql_query($sql) or die("Error in fetching from schema".mysql_error());
-      $cols = array();
-      while($row=mysql_fetch_array($res)){
+      $cols =  array();
+      while($row = mysql_fetch_array($res)){
         array_push($cols,$row['COLUMN_NAME']);
       }
       return $cols;
@@ -852,13 +847,52 @@ function send_att_sms_to_parents($school_id,$action,$query){
 
      }
 
-     function update_tm_script(){
+    function update_tm_script(){
       
       $date_time = date("Y-m-d h:i:s");
 
       $sql = "update chk_server set update_time='$date_time' where id=1";
       mysql_query($sql) or die(mysql_error().$sql);
      }
+
+     
+    function is_valid_act($act_id){
+      
+      $sql = "select ActivityId from activitymark where ActivityId='$act_id'";
+      $res = mysql_query($sql) or die(mysql_error());
+      return mysql_num_rows($res) > 0 ?true:false;
+    }
+
+    function is_valid_subact($sub_act_id){
+      
+      $sql = "select SubActivityId from subactivitymark where SubActivityId='$sub_act_id'";
+      $res = mysql_query($sql) or die(mysql_error());     
+      return mysql_num_rows($res) > 0 ?true:false;
+    }
+
+    function students($section_id){
+     
+       $sql = "select StudentId from students where SectionId='$section_id'";
+       $res = mysql_query($sql) or die(mysql_error());
+
+       $students = array();
+       while($row = mysql_fetch_array($res)){
+        array_push($students,$row["StudentId"]);
+       }
+       return $students;
+    }
+
+    function is_valid_mark($exam_id,$sub_id,$sec_id){
+      
+      $students     = students($sec_id);
+      $students_str = implode(",",$students);
+
+      $sql = "select ExamId from marks where ExamId='$exam_id' and SubjectId='$sub_id' and StudentId in ($students_str)";
+      $res = mysql_query($sql) or die(mysql_error().$sql);
+      
+      return mysql_num_rows($res) > 0 ?true:false;
+    }
+
 
 ?>
 

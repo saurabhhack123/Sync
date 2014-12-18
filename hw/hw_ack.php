@@ -1,4 +1,7 @@
 <?php
+  
+  /* This file is used for homework acknowledgement */
+
   error_reporting(0);
   ini_set('max_execution_time', 30000000);
    
@@ -8,15 +11,9 @@
   $json    = file_get_contents('php://input');
   $ackcall = array();
   $ackcall = json_decode($json,true);
-  
-/* This is for testing tab piloting for switching db dynamically */
-    
-  $school  = $ackcall["school"];
-  connect_db($school); 
-  
 
   $response["success"] = 0;
-
+  
   if(!empty($ackcall)){
 
       foreach($ackcall["ACK_IDS"] as $ids){

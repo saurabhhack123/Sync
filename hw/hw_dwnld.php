@@ -7,18 +7,12 @@
    include_once "../../connection/connect.php";
    include_once "../helper/assist.php";
 
-/* This is for testing tab piloting for switching db dynamically */
-
-   $school        = $_POST['school'];
-   connect_db($school);
-   
-/*recieve data from URI request */   
+/* recieve data from URI request */   
 
    $tab_id    = $_POST['tab_id'];
-
    $school_id = get_school_id($tab_id);
 
-/*check whether data is available or not */
+/* check whether data is available or not */
 
    $is_data = is_hwdata_for_tab($school_id,$tab_id);
    last_time_sync_record($school_id,$tab_id);
@@ -29,11 +23,11 @@
 
 /* prepare json data to send */
 
-   if($is_data && $is_valid_req){
+   if($is_data && $is_valid_req)
      $response = get_hwdata_for_tab($school_id,$tab_id);
-   }else{
-      $response["success"]=0;
-   }
+   else
+     $response["success"]=0;
+   
    
    echo json_encode($response);
  ?>
