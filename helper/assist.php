@@ -10,8 +10,6 @@
     $sql = "select * from block_queue where school_id='$school_id' and stp_sync_scp=1";
     $res = mysql_query($sql) or die(mysql_error().$sql);
     return mysql_num_rows($res) > 0 ?0:1;
-
-
   }
 
   function is_tab_valid($tab_id){
@@ -92,6 +90,15 @@
     exe_query($sql,"Error in inserting into track_tab_data !");
   }
 
+  function  is_cdata_for_tab($school_id,$tab_id){
+
+    $sql  = "select Sync_Mgt_Id from sync_mgt where SchoolId='$school_id' and TabId LIKE '%$tab_id%' and IsAck=0 and Is_complex=1";
+    $res  = mysql_query($sql) or die("Error in fetching from sync_mgt !".mysql_error());
+    $rows = mysql_num_rows($res);
+    
+    return ($rows>0)?true:false;
+  }
+
   function  is_data_for_tab($school_id,$tab_id){
 
     $sql  = "select Sync_Mgt_Id from sync_mgt where SchoolId='$school_id' and TabId='$tab_id' and IsAck=0 and Is_complex=1";
@@ -144,7 +151,7 @@
       $sql  = "select * from $table_name where SchoolId='$school_id' and TabId='$tab_id' and IsAck=0 and Is_complex=1 order by DateTimeRecordInserted ASC LIMIT $offset,5000";
     
     $res  =  mysql_query($sql) or die("$sql Error in fetching from sync_mgt !".mysql_error());
-    $rows = mysql_num_rows($res);
+    $rows =  mysql_num_rows($res);
 
     if($rows == 0)
     {  $data["success"] = 0 ; }
@@ -158,7 +165,7 @@
           $temp['SchoolId']  = $row['SchoolId'];
           array_push($data["Sync"], $temp);
        } 
-     $data["success"] = 1;
+       $data["success"] = 1;
      }
    return $data;
   }
@@ -735,7 +742,7 @@ function send_att_sms_to_parents($school_id,$action,$query){
  
 
     function get_rows_for_tab($table_name,$school_id,$tab_id){
-      $sql   = "select * from $table_name where SchoolId='$school_id' and TabId='$tab_id' and IsAck=0 and Is_complex=1";
+      $sql   = "select TabId from $table_name where SchoolId='$school_id' and TabId='$tab_id' and IsAck=0 and Is_complex=1";
       $res   = mysql_query($sql) or die("Error in fetching from $table_name".mysql_error());
       $rows  = mysql_num_rows($res);
       return $rows;
